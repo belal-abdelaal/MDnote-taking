@@ -21,8 +21,8 @@ class PartialNoteRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "title" => "string|max:255",
-            "note" => "string"
+            "title" => "sometimes|required|string|max:255",
+            "note" => "sometimes|string"
         ];
     }
 

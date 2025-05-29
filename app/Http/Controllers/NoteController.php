@@ -13,7 +13,10 @@ class NoteController extends Controller
 {
     public function validate(NoteRequest|PartialNoteRequest $request, $keys = ["title", "note"])
     {
-        return $request->only($keys);
+        $data = $request->only($keys);
+        foreach ($data as $key => $value)
+            $data[$key] = e($value);
+        return $data;
     }
     public function parseUserToken($token)
     {
@@ -44,9 +47,9 @@ class NoteController extends Controller
         $newNote = $this->validate($request);
         $userId = $this->parseUserToken($request->header("token"));
         $note = Note::where("user_id", $userId)->where("id", $id)->first();
-        if (!$note) 
+        if (!$note)
             return response(["message" => "Note not found !"], 404);
-        
+
         try {
             $note->update($newNote);
         } catch (\Throwable $th) {
@@ -62,16 +65,16 @@ class NoteController extends Controller
     {
         $userId = $this->parseUserToken($request->header("token"));
         $note = Note::where("user_id", $userId)->where("id", $id)->first();
-        
+
         if (!$note)
             return response(["message" => "Note not found !"], 404);
-        
+
         try {
             $note->delete();
         } catch (\Throwable $th) {
             return response(["message" => $th->getMessage()], 500);
         }
-        
+
         return response(["message" => "Note deleted successfuly"], 200);
     }
 }
