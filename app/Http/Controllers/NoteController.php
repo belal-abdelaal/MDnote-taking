@@ -58,4 +58,20 @@ class NoteController extends Controller
             "note" => new NoteResource($note)
         ], 200);
     }
+    public function delete(Request $request, $id)
+    {
+        $userId = $this->parseUserToken($request->header("token"));
+        $note = Note::where("user_id", $userId)->where("id", $id)->first();
+        
+        if (!$note)
+            return response(["message" => "Note not found !"], 404);
+        
+        try {
+            $note->delete();
+        } catch (\Throwable $th) {
+            return response(["message" => $th->getMessage()], 500);
+        }
+        
+        return response(["message" => "Note deleted successfuly"], 200);
+    }
 }
