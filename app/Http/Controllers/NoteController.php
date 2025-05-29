@@ -11,8 +11,10 @@ use Laravel\Sanctum\PersonalAccessToken;
 
 class NoteController extends Controller
 {
-    public function validate(NoteRequest|PartialNoteRequest $request, $keys = ["title", "note"])
-    {
+    public function validate(
+        NoteRequest|PartialNoteRequest $request,
+        $keys = ["title", "note"]
+    ) {
         $data = $request->only($keys);
         foreach ($data as $key => $value)
             $data[$key] = e($value);
