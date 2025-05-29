@@ -39,4 +39,23 @@ class NoteController extends Controller
             "note" => new NoteResource($note)
         ], 201);
     }
+    public function update(PartialNoteRequest $request, $id)
+    {
+        $newNote = $this->validate($request);
+        $userId = $this->parseUserToken($request->header("token"));
+        $note = Note::where("user_id", $userId)->where("id", $id)->first();
+        if (!$note) 
+            return response(["message" => "Note not found !"], 404);
+        
+        try {
+            $note->update($newNote);
+        } catch (\Throwable $th) {
+            return response(["message" => "Internal server error !"], 500);
+        }
+
+        return response([
+            "message" => "Note updated successfuly",
+            "note" => new NoteResource($note)
+        ], 200);
+    }
 }
