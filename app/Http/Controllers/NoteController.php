@@ -82,7 +82,7 @@ class NoteController extends Controller
         try {
             $note->update($newNote);
         } catch (\Throwable $th) {
-            return response(["message" => "Internal server error !"], 500);
+            return response(["message" => $th->getMessage()], 500);
         }
 
         return response([
