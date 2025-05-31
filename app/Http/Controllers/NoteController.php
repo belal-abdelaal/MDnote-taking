@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Str;
 use App\Http\Requests\NoteRequest;
 use App\Http\Requests\PartialNoteRequest;
+use App\Http\Resources\NoteCollection;
 use App\Http\Resources\NoteResource;
 use App\Models\Note;
 use Illuminate\Http\Request;
@@ -43,6 +45,31 @@ class NoteController extends Controller
             "message" => "Note created successfuly",
             "note" => new NoteResource($note)
         ], 201);
+    }
+    public function get(Request $request, $id = null)
+    {
+        $userId = $this->parseUserToken($request->header("token"));
+        if ($id) {
+            $note = Note::where("user_id", $userId)->where("id", $id)->first();
+
+            if (!$note)
+                return response(["message" => "Note not found !"], 404);
+
+            if ($request->get("md") == 1)
+                $note->note = Str::of($note->note)->markdown();
+
+            return response(new NoteResource($note), 200);
+        }
+        $notes = Note::where("user_id", $userId)->get();
+
+        if (!count($notes))
+            return $notes;
+
+        if ($request->get("md") == 1)
+            for ($i = 0; $i < count($notes); $i++)
+                $notes[$i]->note = Str::of($notes[$i]->note)->markdown();
+
+        return new NoteCollection($notes);
     }
     public function update(PartialNoteRequest $request, $id)
     {

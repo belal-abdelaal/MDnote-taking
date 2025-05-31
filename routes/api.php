@@ -15,6 +15,7 @@ Route::controller(UserController::class)->group(function () {
 
 Route::controller(NoteController::class)->group(function () {
     Route::post("/notes", "create")->middleware(ValidateToken::class);
+    Route::get("/notes/{id?}", "get")->middleware(ValidateToken::class);
     Route::put("/notes/{id}", "update")->middleware(ValidateToken::class);
     Route::delete("/notes/{id}", "delete")->middleware(ValidateToken::class);
 });
