@@ -3,6 +3,7 @@
 use App\Http\Controllers\NoteController;
 use App\Http\Controllers\UserController;
 use App\Http\Middleware\ValidateToken;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -19,7 +20,3 @@ Route::controller(NoteController::class)->group(function () {
     Route::put("/notes/{id}", "update")->middleware(ValidateToken::class);
     Route::delete("/notes/{id}", "delete")->middleware(ValidateToken::class);
 });
-
-Route::get('/user', function (Request $request) {
-    return $request->user();
-})->middleware('auth:sanctum');
